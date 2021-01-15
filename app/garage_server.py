@@ -8,10 +8,13 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 
 class S(BaseHTTPRequestHandler):
     def do_POST(self):
+        global Secret
+        global GarageIP
+        global GaragePort
         if self.path == "/garage/touch":
             x = self.headers.get("Authorization")
             if x == Secret:
-                notifyGarage()
+                notifyGarage(GarageIP, GaragePort)
                 self.send_response(204)
             else:
                 self.send_response(401)
@@ -34,13 +37,13 @@ def notifyGarage(host="10.0.1.127", port=1011):
 if __name__ == "__main__":
     with open('/config/secret.txt', 'r') as f:
         global Secret
-        Secret = f.read()
+        Secret = f.read().strip()
     with open('/config/host.txt', 'r') as f:
-        global GarageIP, GaragePort
-        a = f.read().split(':')
+        a = f.read().strip().split(':')
+        global GarageIP
+        global GaragePort
         GarageIP = a[0]
         GaragePort = int(a[1])
     print(f"will talk to {GarageIP}:{GaragePort}")
 
     run()
-
