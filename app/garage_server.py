@@ -2,14 +2,10 @@
 """
 Trigger garage door
 """
-from re import UNICODE
 import requests
 import socket
-import select
 import json
 from http.server import HTTPServer, BaseHTTPRequestHandler
-
-from requests.models import HTTPError
 
 class GarageLock:
     @staticmethod
@@ -36,8 +32,11 @@ class GarageLock:
         print(f"set state to {state}", flush=True)
     
 
-def notifyGarage(host="10.0.1.127", port=1011):
-    target = (host, port)
+def notifyGarage():
+    #host="10.0.1.127", port=1011
+    global GarageIP
+    global GaragePort
+    target = (GarageIP, GaragePort)
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.sendto(b"4\n", (target))
     s.close()
@@ -121,22 +120,23 @@ def run(server_class=HTTPServer, handler_class=S, addr="0.0.0.0", port=8088):
     httpd.serve_forever()
 
 if __name__ == "__main__":
+    global Secret
     with open('/config/secret.txt', 'r') as f:
-        global Secret
         Secret = f.readlines()[0].strip()
-    with open('/config/host.txt', 'r') as f:
-        global GarageIP, GaragePort
-        a = f.read().split(':')
-        GarageIP = a[0]
-        GaragePort = int(a[1])
-    print(f"will talk to {GarageIP}:{GaragePort}", flush=True)
-
-    GarageLock.Lock()
 
     global UI
     with open("/ui/ui.html", "r") as f:
         ui = f.read()
     UI = ui.replace("SECRET_TEMPLATE", Secret)
 
-    run()
+    global GarageIP
+    global GaragePort
+    with open('/config/host.txt', 'r') as f:
+        a = f.read().strip().split(':')
+        GarageIP = a[0]
+        GaragePort = int(a[1])
+    print(f"will talk to {GarageIP}:{GaragePort}", flush=True)
 
+    GarageLock.Lock()
+
+    run()
