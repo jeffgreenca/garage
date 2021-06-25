@@ -71,10 +71,13 @@
             }
             document.getElementById("clicker").innerText = "Press Door Control"
         }
+
+	setTimeout(getStatus, 500);
+	setInterval(getStatus, 5000);
     </script>
 </head>
 
-<body onload="getStatus()">
+<body>
     <h1>Garage Door</h1>
     <h2>Remote Control Status</h2>
     <p><span id="isLocked"></span></p>
@@ -83,6 +86,8 @@
     <button onclick="lock()">Disable</button>
     <h2>Door Operation</h2>
     <button id="clicker" onclick="touch()">Press Door Control</button>
+    <h2>Camera</h2>
+    <img src="http://10.2.3.53/cgi-bin/hi3510/snap.cgi?&amp;-getstream&amp;-chn=2" width="400">
 </body>
 
 </html>
