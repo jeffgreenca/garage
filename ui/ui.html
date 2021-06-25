@@ -1,0 +1,88 @@
+<html>
+
+</html>
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            background-color: #202020;
+            color: white;
+            font-size: 1.5em;
+            text-align: center;
+        }
+
+        #isLocked {
+            font-size: 1.2em;
+        }
+
+        h1 {
+            font-size: 2em;
+        }
+
+        h2 {
+            font-size: 1.2em;
+        }
+
+        button {
+            font-size: 1.5em;
+            padding: 0.5em;
+            margin-left: 0.8em;
+            margin-right: 0.8em;
+            margin-top: 0.2em;
+            margin-bottom: 0.2em;
+            width: 5em;
+            background-color: #88aaaa;
+        }
+
+        button#clicker {
+            background-color: #88aa88;
+            width: auto;
+        }
+    </style>
+    <script>
+        function getStatus() {
+            fetch('/garage/status')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("isLocked").innerText = data.locked ? "Locked": "Unlocked";
+                    document.getElementById("isLocked").style.color = data.locked ? "#ff6666": "#66ff66";
+                });
+        }
+        const opts = {
+            method: "POST",
+            headers: {
+                Authorization: "SECRET_TEMPLATE"
+            }
+        }
+        async function unlock() {
+            await fetch('/garage/unlock', opts);
+            getStatus();
+        }
+        async function lock() {
+            await fetch('/garage/lock', opts);
+            getStatus();
+        }
+        async function touch() {
+            document.getElementById("clicker").innerText = "Press Door Control..."
+            const response = await fetch('/garage/touch', opts);
+            if (response.status !== 204) {
+                response.text().then(o => alert(response.status + ": " + o))
+            }
+            document.getElementById("clicker").innerText = "Press Door Control"
+        }
+    </script>
+</head>
+
+<body onload="getStatus()">
+    <h1>Garage Door</h1>
+    <h2>Status</h2>
+    <p><span id="isLocked"></span></p>
+    <h2>Lock Controls</h2>
+    <button onclick="unlock()">Unlock</button>
+    <button onclick="lock()">Lock</button>
+    <h2>Door Operation</h2>
+    <button id="clicker" onclick="touch()">Press Door Control</button>
+</body>
+
+</html>
