@@ -26,7 +26,7 @@
 
         button {
             font-size: 1.5em;
-            padding: 0.5em;
+            padding: 0.8em;
             margin-left: 0.8em;
             margin-right: 0.8em;
             margin-top: 0.2em;
@@ -45,7 +45,7 @@
             fetch('/garage/status')
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById("isLocked").innerText = data.locked ? "Locked": "Unlocked";
+                    document.getElementById("isLocked").innerText = data.locked ? "Disabled": "Enabled";
                     document.getElementById("isLocked").style.color = data.locked ? "#ff6666": "#66ff66";
                 });
         }
@@ -76,11 +76,11 @@
 
 <body onload="getStatus()">
     <h1>Garage Door</h1>
-    <h2>Status</h2>
+    <h2>Remote Control Status</h2>
     <p><span id="isLocked"></span></p>
-    <h2>Lock Controls</h2>
-    <button onclick="unlock()">Unlock</button>
-    <button onclick="lock()">Lock</button>
+    <h2>Manage</h2>
+    <button onclick="unlock()">Enable</button>
+    <button onclick="lock()">Disable</button>
     <h2>Door Operation</h2>
     <button id="clicker" onclick="touch()">Press Door Control</button>
 </body>
